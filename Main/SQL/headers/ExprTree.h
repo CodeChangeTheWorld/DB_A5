@@ -264,12 +264,14 @@ public:
 
     string checkType(MyDB_CatalogPtr c){
         string ltype = lhs->checkType(c), rtype = rhs->checkType(c);
+        cout<< "left type :" <<ltype << ",right type : " <<rtype <<endl;
         if(ltype.compare("int") == 0 && rtype.compare("int") ==0 ) return "int";
         if(ltype.compare("string")==0 && rtype.compare("string")==0) return "string";
         if((ltype.compare("int")==0 && (rtype.compare("double") == 0 || rtype.compare("int") ==0))
            || (ltype.compare("double")== 0 && (rtype.compare("int")==0 || rtype.compare("double")==0))){
             return "double";
         }
+
         cout<<"Type Error:"<<ltype << " + " << rtype << " type does not match."<<endl;
         return "none";
     }
