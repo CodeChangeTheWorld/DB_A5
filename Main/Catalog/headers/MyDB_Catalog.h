@@ -64,7 +64,7 @@ public:
     string getAttributeName(string);
     void clearGroupList();
     void clearTableList();
-
+	vector<pair<string, string>> getGroupList();
 
 private:
 
