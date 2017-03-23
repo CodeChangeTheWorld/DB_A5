@@ -52,6 +52,7 @@ public:
 		return true;
 	}
     string checkType(MyDB_CatalogPtr c){
+        cout<< "type is bool "<<endl;
         return "bool";
     }
 };
@@ -79,6 +80,7 @@ public:
     }
 
     string checkType(MyDB_CatalogPtr c){
+        cout<< "type is double "<<endl;
         return "double";
     }
 
@@ -110,6 +112,7 @@ public:
     }
 
     string checkType(MyDB_CatalogPtr c){
+        cout<< "type is int "<<endl;
         return "int";
     }
 
@@ -140,6 +143,7 @@ public:
     }
 
     string checkType(MyDB_CatalogPtr c){
+        cout<< "type is string "<<endl;
         return "string";
     }
 
@@ -190,6 +194,7 @@ public:
     string checkType(MyDB_CatalogPtr c){
 		string type;
         c->getString(c->getFullTableName(tableName)+"."+attName + ".type",type);
+        cout<< "type is "<< type << endl;
         return type;
 	}
 
@@ -223,6 +228,7 @@ public:
 
     string checkType(MyDB_CatalogPtr c){
         string ltype = lhs->checkType(c), rtype = rhs->checkType(c);
+        cout<< "type is minus "<<endl;
         if(ltype.compare("int") == 0 && rtype.compare("int") ==0 ) return "int";
         if((ltype.compare("int")==0 && (rtype.compare("double") == 0 || rtype.compare("int") ==0))
         || (ltype.compare("double")== 0 && (rtype.compare("int")==0 || rtype.compare("double")==0))){
@@ -307,6 +313,7 @@ public:
 
     string checkType(MyDB_CatalogPtr c){
         string ltype = lhs->checkType(c), rtype = rhs->checkType(c);
+        cout<< "type is *" <<endl;
         if(ltype.compare("int") == 0 && rtype.compare("int") ==0 ) return "int";
         if((ltype.compare("int")==0 && (rtype.compare("double") == 0 || rtype.compare("int") ==0))
            || (ltype.compare("double")== 0 && (rtype.compare("int")==0 || rtype.compare("double")==0))){
@@ -347,6 +354,7 @@ public:
 
     string checkType(MyDB_CatalogPtr c){
         string ltype = lhs->checkType(c), rtype = rhs->checkType(c);
+        cout<< "type is /" <<endl;
         if(ltype.compare("int") == 0 && rtype.compare("int") ==0 ) return "int";
         if((ltype.compare("int")==0 && (rtype.compare("double") == 0 || rtype.compare("int") ==0))
            || (ltype.compare("double")== 0 && (rtype.compare("int")==0 || rtype.compare("double")==0))){
@@ -389,6 +397,9 @@ public:
 
     string checkType(MyDB_CatalogPtr c){
         string ltype = lhs->checkType(c), rtype = rhs->checkType(c);
+        cout<< "type is >" <<endl;
+        cout<< ltype <<endl;
+        cout<< rtype <<endl;
         if(ltype.compare("string") == 0 && rtype.compare("string") ==0 ) return "bool";
         if((ltype.compare("int")==0 || ltype.compare("double")== 0)&& (rtype.compare("double") == 0 || rtype.compare("int") ==0)){
             return "bool";
@@ -431,6 +442,9 @@ public:
 
     string checkType(MyDB_CatalogPtr c){
         string ltype = lhs->checkType(c), rtype = rhs->checkType(c);
+        cout<< "type is <" <<endl;
+        cout<< ltype <<endl;
+        cout<< rtype <<endl;
         if(ltype.compare("string") == 0 && rtype.compare("string") ==0 ) return "bool";
         if((ltype.compare("int")==0 || ltype.compare("double")== 0)&& (rtype.compare("double") == 0 || rtype.compare("int") ==0)){
             return "bool";
@@ -471,6 +485,9 @@ public:
 
     string checkType(MyDB_CatalogPtr c){
         string ltype = lhs->checkType(c), rtype = rhs->checkType(c);
+        cout<< "type is !=" <<endl;
+        cout<< ltype <<endl;
+        cout<< rtype <<endl;
         if(ltype.compare("string") == 0 && rtype.compare("string") ==0 ) return "bool";
         if((ltype.compare("int")==0 || ltype.compare("double")== 0)&& (rtype.compare("double") == 0 || rtype.compare("int") ==0)){
             return "bool";
@@ -511,6 +528,9 @@ public:
 
     string checkType(MyDB_CatalogPtr c){
         string ltype = lhs->checkType(c), rtype = rhs->checkType(c);
+        cout<< "type is ||" <<endl;
+        cout<< ltype <<endl;
+        cout<< rtype <<endl;
         if(ltype.compare("bool") == 0 && rtype.compare("bool") ==0 ) return "bool";
 
         cout<<"Type Error:"<<ltype << " != " << rtype << " type does not match."<<endl;
@@ -549,6 +569,9 @@ public:
 
     string checkType(MyDB_CatalogPtr c){
         string ltype = lhs->checkType(c), rtype = rhs->checkType(c);
+        cout<< "type is ==" <<endl;
+        cout<< ltype <<endl;
+        cout<< rtype <<endl;
         if(ltype.compare("string") == 0 && rtype.compare("string") ==0 ) return "bool";
         if((ltype.compare("int")==0 || ltype.compare("double")== 0)&& (rtype.compare("double") == 0 || rtype.compare("int") ==0)){
             return "bool";
@@ -587,6 +610,8 @@ public:
 
     string checkType(MyDB_CatalogPtr c){
         string ctype = child->checkType(c);
+        cout<< "type is !" <<endl;
+        cout<< ctype <<endl;
         if(ctype.compare("bool") == 0) return "bool";
         cout<<"Type Error:"<< " !(" << ctype << ") type does not match."<<endl;
         return "none";
