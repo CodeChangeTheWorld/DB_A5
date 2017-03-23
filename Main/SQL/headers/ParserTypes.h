@@ -294,6 +294,9 @@ public:
 
 		//check select clause
 		if(groupingClauses.size()>0){
+			for(auto group:mycatalog->group_list){
+				cout<< group.first << " and "<<group.second<<endl;
+			}
 			for(auto select:valuesToSelect){
 				if(!select->inGroupBy(mycatalog)){
 					cout<<"Select value " + select->toString() + " is not in GROUP BY clause."<<endl;
