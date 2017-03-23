@@ -620,6 +620,7 @@ public:
 
     string checkType(MyDB_CatalogPtr c){
         string ctype = child->checkType(c);
+        cout<< "child's type : "<< ctype <<endl;
         if(ctype.compare("int") == 0 || ctype.compare("double") == 0) return "int";
         cout<<"Type Error:"<< " sum(" << ctype << ") type does not match."<<endl;
         return "none";
