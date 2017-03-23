@@ -166,11 +166,11 @@ public:
 	bool validateTree(MyDB_CatalogPtr c){
 		//check if table exist
 		if(c->tableIndex(tableName) == -1){
-            cout<<"Error: Table '" + tableName + "' doesn't exist";
+            cout<<"Error: Table '" + tableName + "' doesn't exist" <<endl;
             return false;
         }
         if(c->findAttr(tableName, attName) == false){
-            cout<< "Error: Table "<< tableName << "does not have attribute " + attName << "." <<endl;
+            cout<< "Error: Table "<< tableName << " does not have attribute " + attName << "." <<endl;
             return false;
         }
         return true;
