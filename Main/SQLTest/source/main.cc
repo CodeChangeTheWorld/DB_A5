@@ -88,7 +88,7 @@ int main (int numArgs, char **args) {
 						// print it out
 						final->printSFWQuery ();
                         //print all tables
-                        for(auto table:MyDB_Table::getAllTables(mycatalog)){
+                        for(auto table:MyDB_Table::getAllTables(myCatalog)){
                             cout<< "Table : " << table.first << endl;
                         }
 
