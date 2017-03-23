@@ -248,6 +248,66 @@ public:
 		}
 	}
 
+    bool tableInCatalog(string tableName, MyDB_CatalogPtr mycatalog){
+        for(auto table:MyDB_Table::getAllTables(mycatalog)){
+            if(table.first.compare(tableName) == 0){
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+    bool validate(MyDB_CatalogPtr mycatalog){
+        bool res = true;
+        //validate table
+        for(auto table:tablesToProcess){
+            if(!tableInCatalog(table.first, mycatalog)){
+                res = false;
+                cout << "Error: table '" + table.first + "' does not exist";
+				break;
+            }
+			mycatalog->addToTableList(table.first,table.second);
+        }
+        //validate disjunction
+		for(auto discon:allDisjunctions){
+			if(!discon->validateTree(mycatalog)){
+				cout<< "Error: Disjunction is not valid."<<endl;
+				res = false;
+				break;
+			}
+			if(discon->checkType(mycatalog).compare("none") == 0) {
+				cout << "Error: Type is not valid." << endl;
+				res = false;
+				break;
+			}
+		}
+        //validate grouping
+		for(auto group:groupingClauses){
+			if(!group->validateTree(mycatalog)){
+				cout<<"Error: Group Clause is not valid"<<endl;
+				res = false;
+				break;
+			}
+			mycatalog->addToGroupList(mycatalog->getTableName(group->toString()),mycatalog->getAttributeName(group->toString()));
+		}
+
+		//check select clause
+		if(groupingClauses.size()>0){
+			for(auto select:valuesToSelect){
+				if(!select->inGroupBy(mycatalog)){
+					cout<<"Select value " + select->toString() + " is not in GROUP BY clause."<<endl;
+					res = false;
+					break;
+				}
+			}
+		}
+
+		mycatalog->clearGroupList();
+		mycatalog->clearTableList();
+
+		return res;
+    }
 	#include "FriendDecls.h"
 };
 
@@ -292,6 +352,13 @@ public:
 	void printSFWQuery () {
 		myQuery.print ();
 	}
+
+	bool semanticCheck(MyDB_CatalogPtr cat){
+		if(isQuery){
+			return myQuery.validate(cat);
+		}
+		return false;
+	};
 
 	#include "FriendDecls.h"
 };

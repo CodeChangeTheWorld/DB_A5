@@ -5,6 +5,7 @@
 #include "MyDB_AttType.h"
 #include <string>
 #include <vector>
+#include <MyDB_Catalog.h>
 
 // create a smart pointer for database tables
 using namespace std;
@@ -17,6 +18,10 @@ typedef shared_ptr <ExprTree> ExprTreePtr;
 class ExprTree {
 
 public:
+    string type;
+	virtual bool validateTree(MyDB_CatalogPtr c)=0;
+    virtual string checkType(MyDB_CatalogPtr c)=0;
+    virtual bool inGroupBy(MyDB_CatalogPtr c)=0;
 	virtual string toString () = 0;
 	virtual ~ExprTree () {}
 };
@@ -26,9 +31,10 @@ class BoolLiteral : public ExprTree {
 private:
 	bool myVal;
 public:
-	
+
 	BoolLiteral (bool fromMe) {
 		myVal = fromMe;
+        type = "bool";
 	}
 
 	string toString () {
@@ -37,7 +43,17 @@ public:
 		} else {
 			return "bool[false]";
 		}
-	}	
+	}
+
+	bool validateTree(MyDB_CatalogPtr c){
+		return true;
+	}
+    bool inGroupBy(MyDB_CatalogPtr c){
+		return true;
+	}
+    string checkType(MyDB_CatalogPtr c){
+        return "bool";
+    }
 };
 
 class DoubleLiteral : public ExprTree {
@@ -48,11 +64,23 @@ public:
 
 	DoubleLiteral (double fromMe) {
 		myVal = fromMe;
+        type = "double";
 	}
 
 	string toString () {
 		return "double[" + to_string (myVal) + "]";
-	}	
+	}
+
+    bool validateTree(MyDB_CatalogPtr c){
+        return true;
+    }
+    bool inGroupBy(MyDB_CatalogPtr c){
+        return true;
+    }
+
+    string checkType(MyDB_CatalogPtr c){
+        return "double";
+    }
 
 	~DoubleLiteral () {}
 };
@@ -66,11 +94,24 @@ public:
 
 	IntLiteral (int fromMe) {
 		myVal = fromMe;
+        type = "int";
 	}
+
 
 	string toString () {
 		return "int[" + to_string (myVal) + "]";
 	}
+
+    bool validateTree(MyDB_CatalogPtr c){
+        return true;
+    }
+    bool inGroupBy(MyDB_CatalogPtr c){
+        return true;
+    }
+
+    string checkType(MyDB_CatalogPtr c){
+        return "int";
+    }
 
 	~IntLiteral () {}
 };
@@ -84,11 +125,23 @@ public:
 	StringLiteral (char *fromMe) {
 		fromMe[strlen (fromMe) - 1] = 0;
 		myVal = string (fromMe + 1);
+        type = "string";
 	}
 
 	string toString () {
 		return "string[" + myVal + "]";
 	}
+
+    bool validateTree(MyDB_CatalogPtr c){
+        return true;
+    }
+    bool inGroupBy(MyDB_CatalogPtr c){
+        return true;
+    }
+
+    string checkType(MyDB_CatalogPtr c){
+        return "string";
+    }
 
 	~StringLiteral () {}
 };
@@ -103,11 +156,42 @@ public:
 	Identifier (char *tableNameIn, char *attNameIn) {
 		tableName = string (tableNameIn);
 		attName = string (attNameIn);
+        type = "identifier";
 	}
 
 	string toString () {
 		return "[" + tableName + "_" + attName + "]";
-	}	
+	}
+
+	bool validateTree(MyDB_CatalogPtr c){
+		//check if table exist
+		if(c->tableIndex(tableName) == -1){
+            cout<<"No table '" + tableName + "' exist";
+            return false;
+        }
+        if(c->findAttr(tableName, attName) == false){
+            cout<< "No attribute " + attName +" in table "+ tableName +" was found." <<endl;
+            return false;
+        }
+        return true;
+	}
+
+
+    bool inGroupBy(MyDB_CatalogPtr c){
+        if(c->inGroupBy(tableName,attName)==-1)
+        {
+            cout<<tableName<<" and "<<attName<<" are not in group by clause"<<endl;
+            return false; // not on the grouping list
+        }
+        else
+            return true;	// on the grouping list
+	}
+
+    string checkType(MyDB_CatalogPtr c){
+		string type;
+        c->getString(c->getFullTableName(tableName)+"."+attName + ".type",type);
+        return type;
+	}
 
 	~Identifier () {}
 };
@@ -124,6 +208,7 @@ public:
 	MinusOp (ExprTreePtr lhsIn, ExprTreePtr rhsIn) {
 		lhs = lhsIn;
 		rhs = rhsIn;
+        type = "expression";
 	}
 
 	string toString () {
@@ -131,6 +216,26 @@ public:
 	}	
 
 	~MinusOp () {}
+
+    bool validateTree(MyDB_CatalogPtr c){
+       return (lhs->validateTree(c) && rhs->validateTree(c));
+    }
+
+    string checkType(MyDB_CatalogPtr c){
+        string ltype = lhs->checkType(c), rtype = rhs->checkType(c);
+        if(ltype.compare("int") == 0 && rtype.compare("int") ==0 ) return "int";
+        if((ltype.compare("int")==0 && (rtype.compare("double") == 0 || rtype.compare("int") ==0))
+        || (ltype.compare("double")== 0 && (rtype.compare("int")==0 || rtype.compare("double")==0))){
+            return "double";
+        }
+        cout<<"Type Error:"<<ltype << " - " << rtype << " type does not match."<<endl;
+        return "none";
+    }
+
+    bool inGroupBy(MyDB_CatalogPtr c){
+        return lhs->inGroupBy(c) && rhs->inGroupBy(c);
+    }
+
 };
 
 class PlusOp : public ExprTree {
@@ -152,6 +257,26 @@ public:
 	}	
 
 	~PlusOp () {}
+
+    bool validateTree(MyDB_CatalogPtr c){
+        return (lhs->validateTree(c) && rhs->validateTree(c));
+    }
+
+    string checkType(MyDB_CatalogPtr c){
+        string ltype = lhs->checkType(c), rtype = rhs->checkType(c);
+        if(ltype.compare("int") == 0 && rtype.compare("int") ==0 ) return "int";
+        if(ltype.compare("string")==0 && rtype.compare("string")==0) return "string";
+        if((ltype.compare("int")==0 && (rtype.compare("double") == 0 || rtype.compare("int") ==0))
+           || (ltype.compare("double")== 0 && (rtype.compare("int")==0 || rtype.compare("double")==0))){
+            return "double";
+        }
+        cout<<"Type Error:"<<ltype << " + " << rtype << " type does not match."<<endl;
+        return "none";
+    }
+
+    bool inGroupBy(MyDB_CatalogPtr c){
+        return lhs->inGroupBy(c) && rhs->inGroupBy(c);
+    }
 };
 
 class TimesOp : public ExprTree {
@@ -173,6 +298,25 @@ public:
 	}	
 
 	~TimesOp () {}
+
+    bool validateTree(MyDB_CatalogPtr c){
+        return (lhs->validateTree(c) && rhs->validateTree(c));
+    }
+
+    string checkType(MyDB_CatalogPtr c){
+        string ltype = lhs->checkType(c), rtype = rhs->checkType(c);
+        if(ltype.compare("int") == 0 && rtype.compare("int") ==0 ) return "int";
+        if((ltype.compare("int")==0 && (rtype.compare("double") == 0 || rtype.compare("int") ==0))
+           || (ltype.compare("double")== 0 && (rtype.compare("int")==0 || rtype.compare("double")==0))){
+            return "double";
+        }
+        cout<<"Type Error:"<<ltype << " * " << rtype << " type does not match."<<endl;
+        return "none";
+    }
+
+    bool inGroupBy(MyDB_CatalogPtr c){
+        return lhs->inGroupBy(c) && rhs->inGroupBy(c);
+    }
 };
 
 class DivideOp : public ExprTree {
@@ -194,6 +338,26 @@ public:
 	}	
 
 	~DivideOp () {}
+
+    bool validateTree(MyDB_CatalogPtr c){
+        return (lhs->validateTree(c) && rhs->validateTree(c));
+    }
+
+    string checkType(MyDB_CatalogPtr c){
+        string ltype = lhs->checkType(c), rtype = rhs->checkType(c);
+        if(ltype.compare("int") == 0 && rtype.compare("int") ==0 ) return "int";
+        if((ltype.compare("int")==0 && (rtype.compare("double") == 0 || rtype.compare("int") ==0))
+           || (ltype.compare("double")== 0 && (rtype.compare("int")==0 || rtype.compare("double")==0))){
+            return "double";
+        }
+
+        cout<<"Type Error:"<<ltype << " / " << rtype << " type does not match."<<endl;
+        return "none";
+    }
+
+    bool inGroupBy(MyDB_CatalogPtr c){
+        return lhs->inGroupBy(c) && rhs->inGroupBy(c);
+    }
 };
 
 class GtOp : public ExprTree {
@@ -208,6 +372,7 @@ public:
 	GtOp (ExprTreePtr lhsIn, ExprTreePtr rhsIn) {
 		lhs = lhsIn;
 		rhs = rhsIn;
+        type = "bool";
 	}
 
 	string toString () {
@@ -215,6 +380,27 @@ public:
 	}	
 
 	~GtOp () {}
+
+    bool validateTree(MyDB_CatalogPtr c){
+        return (lhs->validateTree(c) && rhs->validateTree(c));
+    }
+
+    string checkType(MyDB_CatalogPtr c){
+        string ltype = lhs->checkType(c), rtype = rhs->checkType(c);
+        if(ltype.compare("string") == 0 && rtype.compare("string") ==0 ) return "bool";
+        if((ltype.compare("int")==0 || ltype.compare("double")== 0)&& (rtype.compare("double") == 0 || rtype.compare("int") ==0)){
+            return "bool";
+        }
+
+
+        cout<<"Type Error:"<<ltype << " > " << rtype << " type does not match."<<endl;
+        return "none";
+    }
+
+    bool inGroupBy(MyDB_CatalogPtr c){
+        return lhs->inGroupBy(c) && rhs->inGroupBy(c);
+    }
+
 };
 
 class LtOp : public ExprTree {
@@ -236,6 +422,25 @@ public:
 	}	
 
 	~LtOp () {}
+
+    bool validateTree(MyDB_CatalogPtr c){
+        return (lhs->validateTree(c) && rhs->validateTree(c));
+    }
+
+    string checkType(MyDB_CatalogPtr c){
+        string ltype = lhs->checkType(c), rtype = rhs->checkType(c);
+        if(ltype.compare("string") == 0 && rtype.compare("string") ==0 ) return "bool";
+        if((ltype.compare("int")==0 || ltype.compare("double")== 0)&& (rtype.compare("double") == 0 || rtype.compare("int") ==0)){
+            return "bool";
+        }
+
+        cout<<"Type Error:"<<ltype << " < " << rtype << " type does not match."<<endl;
+        return "none";
+    }
+
+    bool inGroupBy(MyDB_CatalogPtr c){
+        return lhs->inGroupBy(c) && rhs->inGroupBy(c);
+    }
 };
 
 class NeqOp : public ExprTree {
@@ -257,6 +462,25 @@ public:
 	}	
 
 	~NeqOp () {}
+
+    bool validateTree(MyDB_CatalogPtr c){
+        return (lhs->validateTree(c) && rhs->validateTree(c));
+    }
+
+    string checkType(MyDB_CatalogPtr c){
+        string ltype = lhs->checkType(c), rtype = rhs->checkType(c);
+        if(ltype.compare("string") == 0 && rtype.compare("string") ==0 ) return "bool";
+        if((ltype.compare("int")==0 || ltype.compare("double")== 0)&& (rtype.compare("double") == 0 || rtype.compare("int") ==0)){
+            return "bool";
+        }
+
+        cout<<"Type Error:"<<ltype << " != " << rtype << " type does not match."<<endl;
+        return "none";
+    }
+
+    bool inGroupBy(MyDB_CatalogPtr c){
+        return lhs->inGroupBy(c) && rhs->inGroupBy(c);
+    }
 };
 
 class OrOp : public ExprTree {
@@ -278,6 +502,22 @@ public:
 	}	
 
 	~OrOp () {}
+
+    bool validateTree(MyDB_CatalogPtr c){
+        return (lhs->validateTree(c) && rhs->validateTree(c));
+    }
+
+    string checkType(MyDB_CatalogPtr c){
+        string ltype = lhs->checkType(c), rtype = rhs->checkType(c);
+        if(ltype.compare("bool") == 0 && rtype.compare("bool") ==0 ) return "bool";
+
+        cout<<"Type Error:"<<ltype << " != " << rtype << " type does not match."<<endl;
+        return "none";
+    }
+
+    bool inGroupBy(MyDB_CatalogPtr c){
+        return lhs->inGroupBy(c) && rhs->inGroupBy(c);
+    }
 };
 
 class EqOp : public ExprTree {
@@ -292,6 +532,7 @@ public:
 	EqOp (ExprTreePtr lhsIn, ExprTreePtr rhsIn) {
 		lhs = lhsIn;
 		rhs = rhsIn;
+        type = "bool";
 	}
 
 	string toString () {
@@ -299,6 +540,25 @@ public:
 	}	
 
 	~EqOp () {}
+
+    bool validateTree(MyDB_CatalogPtr c){
+        return (lhs->validateTree(c) && rhs->validateTree(c));
+    }
+
+    string checkType(MyDB_CatalogPtr c){
+        string ltype = lhs->checkType(c), rtype = rhs->checkType(c);
+        if(ltype.compare("string") == 0 && rtype.compare("string") ==0 ) return "bool";
+        if((ltype.compare("int")==0 || ltype.compare("double")== 0)&& (rtype.compare("double") == 0 || rtype.compare("int") ==0)){
+            return "bool";
+        }
+
+        cout<<"Type Error:"<<ltype << " != " << rtype << " type does not match."<<endl;
+        return "none";
+    }
+
+    bool inGroupBy(MyDB_CatalogPtr c){
+        return lhs->inGroupBy(c) && rhs->inGroupBy(c);
+    }
 };
 
 class NotOp : public ExprTree {
@@ -318,6 +578,22 @@ public:
 	}	
 
 	~NotOp () {}
+
+    bool validateTree(MyDB_CatalogPtr c){
+        return child->validateTree(c);
+    }
+
+    string checkType(MyDB_CatalogPtr c){
+        string ctype = child->checkType(c);
+        if(ctype.compare("bool") == 0) return "bool";
+        cout<<"Type Error:"<< " !(" << ctype << ") type does not match."<<endl;
+        return "none";
+    }
+
+    bool inGroupBy(MyDB_CatalogPtr c){
+        //return child->inGroupBy(c);
+        return true;
+    }
 };
 
 class SumOp : public ExprTree {
@@ -337,6 +613,22 @@ public:
 	}	
 
 	~SumOp () {}
+
+    bool validateTree(MyDB_CatalogPtr c){
+        return child->validateTree(c);
+    }
+
+    string checkType(MyDB_CatalogPtr c){
+        string ctype = child->checkType(c);
+        if(ctype.compare("int") == 0 || ctype.compare("double") == 0) return "int";
+        cout<<"Type Error:"<< " sum(" << ctype << ") type does not match."<<endl;
+        return "none";
+    }
+
+    bool inGroupBy(MyDB_CatalogPtr c){
+        //return child->inGroupBy(c);
+        return true;
+    }
 };
 
 class AvgOp : public ExprTree {
@@ -356,6 +648,22 @@ public:
 	}	
 
 	~AvgOp () {}
+
+    bool validateTree(MyDB_CatalogPtr c){
+        return child->validateTree(c);
+    }
+
+    string checkType(MyDB_CatalogPtr c){
+        string ctype = child->checkType(c);
+        if(ctype.compare("int") == 0 || ctype.compare("double") == 0) return "double";
+        cout<<"Type Error:"<< " avg(" << ctype << ") type does not match."<<endl;
+        return "none";
+    }
+
+    bool inGroupBy(MyDB_CatalogPtr c){
+        //return child->inGroupBy(c);
+        return true;
+    }
 };
 
 #endif

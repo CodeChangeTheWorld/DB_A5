@@ -10,7 +10,6 @@
 
 #include "MyDB_AttType.h"
 #include "MyDB_AttVal.h"
-#include "MyDB_Catalog.h"
 #include "MyDB_Record.h"
 #include "MyDB_Schema.h"
 #include "MyDB_Table.h"
@@ -124,6 +123,78 @@ void MyDB_Catalog :: save () {
 	}
 }
 
+
+int MyDB_Catalog :: tableIndex(string tableName){
+	int i =0;
+	for(pair<string, string> table:table_list){
+		if(table.first.compare(tableName) == 0 || table.second.compare(tableName)==0 )
+			return i;
+		i++;
+	}
+	return -1;
+}
+
+bool MyDB_Catalog :: findAttr(string tableName, string attName){
+	string type;
+	if(getString(tableName+"."+attName+".type",type) == false
+	   && getString(getFullTableName(tableName) + "."+attName+".type",type) == false ){
+		return false;
+	}
+	return true;
+}
+
+string MyDB_Catalog ::getFullTableName(string abbrev) {
+	for(pair<string,string> p:table_list){
+		if(p.second.compare(abbrev) == 0) return p.first;
+	}
+	return "null";
+}
+
+string MyDB_Catalog ::getAbbreviation(string fullname) {
+	for(pair<string,string> p:table_list){
+		if(p.first.compare(fullname) == 0) return p.second;
+	}
+	return "null";
+}
+
+
+int MyDB_Catalog ::inGroupBy(string tableName,string attName){
+	string fullname = getFullTableName(tableName);
+	int i=0;
+	for(pair<string,string> p:table_list){
+		if((p.first.compare(tableName)==0 || p.first.compare(fullname)==0) && p.second.compare(attName) == 0){
+			return i;
+		}
+		i++;
+	}
+	return -1;
+}
+
+void MyDB_Catalog::addToTableList(string tableName, string attName){
+	table_list.push_back(make_pair(tableName,attName));
+}
+
+void MyDB_Catalog::addToGroupList(string tableName, string attName){
+	group_list.push_back(make_pair(tableName,attName));
+}
+
+string MyDB_Catalog::getTableName(string identifier){
+	string abbv;
+	abbv[0]=identifier[1];
+	return getFullTableName(abbv);
+}
+string MyDB_Catalog::getAttributeName(string identifier){
+	string attName = identifier.substr(3,identifier.find(']')-3);
+	return attName;
+}
+
+void MyDB_Catalog::clearGroupList() {
+	group_list.clear();
+}
+
+void MyDB_Catalog::clearTableList() {
+	table_list.clear();
+}
 #endif
 
 

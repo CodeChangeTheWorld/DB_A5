@@ -87,6 +87,13 @@ int main (int numArgs, char **args) {
 
 						// print it out
 						final->printSFWQuery ();
+                        //semantic checks
+                        cout<<"Semantic check begins..." <<endl;
+                        if(final->semanticCheck(myCatalog)){
+                            cout<<"Semantic check passed." << endl;
+                        }else{
+                            cout<<"Semantic check failed." << endl;
+                        }
 					}
 
 					// get outta here

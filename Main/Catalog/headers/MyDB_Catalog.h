@@ -32,7 +32,11 @@ public:
 	bool getStringList (string key, vector <string> &value);
 	bool getDouble (string key, double &value);
 	bool getDoubleList (string key, vector <double> &value);
-
+	int  tableIndex(string tableName);
+    int inGroupBy(string,string);
+    bool findAttr(string,string);
+    string getFullTableName(string);
+    string getAbbreviation(string);
 	// these functions add a new (key, value) pair into the catalog.
 	// If the key is already in the catalog, then its value is replaced.
 	void putString (string key, string value);
@@ -54,6 +58,12 @@ public:
 	// saves any updates to the catalog
 	void save ();
 
+    void addToTableList(string, string);
+    void addToGroupList(string, string);
+    string getTableName(string);
+    string getAttributeName(string);
+    void clearGroupList();
+    void clearTableList();
 private:
 
 	// the name of the catalog file
@@ -61,6 +71,8 @@ private:
 
 	// the map that stores the catalog's contents
 	map <string, string> myData;
+    vector<pair<string, string>> table_list ;
+    vector<pair<string, string>> group_list ;
 };
 
 #endif
