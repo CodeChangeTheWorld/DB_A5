@@ -46,7 +46,7 @@ public:
 	}
 
 	bool validateTree(MyDB_CatalogPtr c){
-        cout<< "BoolLiteral is validating..." <<end;
+        cout<< "BoolLiteral is validating..." <<endl;
 		return true;
 	}
     bool inGroupBy(MyDB_CatalogPtr c){
