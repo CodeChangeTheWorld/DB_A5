@@ -283,7 +283,7 @@ public:
 				break;
 			}
 		}
-		//validate disjunction
+		//validate selection
 		for(auto sel:valuesToSelect){
 			if(!sel->validateTree(mycatalog)){
 				cout<< "Error: Select type is not valid."<< endl;
@@ -291,7 +291,7 @@ public:
 				break;
 			}
 			if(sel->checkType(mycatalog).compare("none") == 0) {
-				cout << "Error: Type is not valid." << endl;
+				cout << "Type Error: Select Type "<< sel->checkType(mycatalog) <<" is not valid." << endl;
 				res = false;
 				break;
 			}
