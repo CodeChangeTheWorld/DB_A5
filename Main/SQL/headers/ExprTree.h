@@ -546,7 +546,7 @@ public:
         cout<< rtype <<endl;
         if(ltype.compare("bool") == 0 && rtype.compare("bool") ==0 ) return "bool";
 
-        cout<<"Type Error:"<<ltype << " != " << rtype << " type does not match."<<endl;
+        cout<<"Type Error:"<<ltype << " || " << rtype << " type does not match."<<endl;
         return "none";
     }
 
@@ -591,7 +591,7 @@ public:
             return "bool";
         }
 
-        cout<<"Type Error:"<<ltype << " != " << rtype << " type does not match."<<endl;
+        cout<<"Type Error:"<<ltype << " == " << rtype << " type does not match."<<endl;
         return "none";
     }
 
@@ -663,8 +663,8 @@ public:
 
     string checkType(MyDB_CatalogPtr c){
         string ctype = child->checkType(c);
-        cout<< "child's type : "<< ctype <<endl;
         if(ctype.compare("int") == 0 || ctype.compare("double") == 0) return "int";
+        cout<< "child's type : "<< ctype <<endl;
         cout<<"Type Error:"<< " sum(" << ctype << ") type does not match."<<endl;
         return "none";
     }
