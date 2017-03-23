@@ -46,14 +46,12 @@ public:
 	}
 
 	bool validateTree(MyDB_CatalogPtr c){
-        cout<< "BoolLiteral is validating..." <<endl;
 		return true;
 	}
     bool inGroupBy(MyDB_CatalogPtr c){
 		return true;
 	}
     string checkType(MyDB_CatalogPtr c){
-        cout<< "type is bool "<<endl;
         return "bool";
     }
 };
@@ -74,7 +72,6 @@ public:
 	}
 
     bool validateTree(MyDB_CatalogPtr c){
-        cout<< "DoubleLiteral is validating..." <<endl;
         return true;
     }
     bool inGroupBy(MyDB_CatalogPtr c){
@@ -82,7 +79,6 @@ public:
     }
 
     string checkType(MyDB_CatalogPtr c){
-        cout<< "type is double "<<endl;
         return "double";
     }
 
@@ -107,7 +103,6 @@ public:
 	}
 
     bool validateTree(MyDB_CatalogPtr c){
-        cout<< "IntLiteral is validating..." <<endl;
         return true;
     }
     bool inGroupBy(MyDB_CatalogPtr c){
@@ -115,7 +110,6 @@ public:
     }
 
     string checkType(MyDB_CatalogPtr c){
-        cout<< "type is int "<<endl;
         return "int";
     }
 
@@ -139,7 +133,6 @@ public:
 	}
 
     bool validateTree(MyDB_CatalogPtr c){
-        cout<< "String is validating..." <<endl;
         return true;
     }
     bool inGroupBy(MyDB_CatalogPtr c){
@@ -147,7 +140,6 @@ public:
     }
 
     string checkType(MyDB_CatalogPtr c){
-        cout<< "type is string "<<endl;
         return "string";
     }
 
@@ -172,14 +164,13 @@ public:
 	}
 
 	bool validateTree(MyDB_CatalogPtr c){
-        cout<< "Identifier is validating..." <<endl;
 		//check if table exist
 		if(c->tableIndex(tableName) == -1){
-            cout<<"No table '" + tableName + "' exist";
+            cout<<"Error: Table '" + tableName + "' doesn't exist";
             return false;
         }
         if(c->findAttr(tableName, attName) == false){
-            cout<< "No attribute " + attName +" in table "+ tableName +" was found." <<endl;
+            cout<< "Error: Table "<< tableName << "does not have attribute " + attName << "." <<endl;
             return false;
         }
         return true;
@@ -189,7 +180,7 @@ public:
     bool inGroupBy(MyDB_CatalogPtr c){
         if(c->inGroupBy(tableName,attName)==-1)
         {
-            cout<<tableName<<" and "<<attName<<" are not in group by clause"<<endl;
+            cout<<"Error: select attribute "<<attName <<" in table "<< tableName <<" are not in group by clause"<<endl;
             return false; // not on the grouping list
         }
         else
@@ -199,7 +190,6 @@ public:
     string checkType(MyDB_CatalogPtr c){
 		string type;
         c->getString(c->getFullTableName(tableName)+"."+attName + ".type",type);
-        cout<< "type is "<< type << endl;
         return type;
 	}
 
@@ -234,7 +224,6 @@ public:
 
     string checkType(MyDB_CatalogPtr c){
         string ltype = lhs->checkType(c), rtype = rhs->checkType(c);
-        cout<< "type is minus "<<endl;
         if(ltype.compare("int") == 0 && rtype.compare("int") ==0 ) return "int";
         if((ltype.compare("int")==0 && (rtype.compare("double") == 0 || rtype.compare("int") ==0))
         || (ltype.compare("double")== 0 && (rtype.compare("int")==0 || rtype.compare("double")==0))){
@@ -271,13 +260,11 @@ public:
 	~PlusOp () {}
 
     bool validateTree(MyDB_CatalogPtr c){
-        cout<< "PlusOp is validating..." <<endl;
         return (lhs->validateTree(c) && rhs->validateTree(c));
     }
 
     string checkType(MyDB_CatalogPtr c){
         string ltype = lhs->checkType(c), rtype = rhs->checkType(c);
-        cout<< "left type :" <<ltype << ",right type : " <<rtype <<endl;
         if(ltype.compare("int") == 0 && rtype.compare("int") ==0 ) return "int";
         if(ltype.compare("string")==0 && rtype.compare("string")==0) return "string";
         if((ltype.compare("int")==0 && (rtype.compare("double") == 0 || rtype.compare("int") ==0))
@@ -315,13 +302,11 @@ public:
 	~TimesOp () {}
 
     bool validateTree(MyDB_CatalogPtr c){
-        cout<< "TimesOp is validating..." <<endl;
         return (lhs->validateTree(c) && rhs->validateTree(c));
     }
 
     string checkType(MyDB_CatalogPtr c){
         string ltype = lhs->checkType(c), rtype = rhs->checkType(c);
-        cout<< "type is *" <<endl;
         if(ltype.compare("int") == 0 && rtype.compare("int") ==0 ) return "int";
         if((ltype.compare("int")==0 && (rtype.compare("double") == 0 || rtype.compare("int") ==0))
            || (ltype.compare("double")== 0 && (rtype.compare("int")==0 || rtype.compare("double")==0))){
@@ -357,13 +342,11 @@ public:
 	~DivideOp () {}
 
     bool validateTree(MyDB_CatalogPtr c){
-        cout<< "DivideOp is validating..." <<endl;
         return (lhs->validateTree(c) && rhs->validateTree(c));
     }
 
     string checkType(MyDB_CatalogPtr c){
         string ltype = lhs->checkType(c), rtype = rhs->checkType(c);
-        cout<< "type is /" <<endl;
         if(ltype.compare("int") == 0 && rtype.compare("int") ==0 ) return "int";
         if((ltype.compare("int")==0 && (rtype.compare("double") == 0 || rtype.compare("int") ==0))
            || (ltype.compare("double")== 0 && (rtype.compare("int")==0 || rtype.compare("double")==0))){
@@ -401,15 +384,11 @@ public:
 	~GtOp () {}
 
     bool validateTree(MyDB_CatalogPtr c){
-        cout<< "GtOp is validating..." <<endl;
         return (lhs->validateTree(c) && rhs->validateTree(c));
     }
 
     string checkType(MyDB_CatalogPtr c){
         string ltype = lhs->checkType(c), rtype = rhs->checkType(c);
-        cout<< "type is >" <<endl;
-        cout<< ltype <<endl;
-        cout<< rtype <<endl;
         if(ltype.compare("string") == 0 && rtype.compare("string") ==0 ) return "bool";
         if((ltype.compare("int")==0 || ltype.compare("double")== 0)&& (rtype.compare("double") == 0 || rtype.compare("int") ==0)){
             return "bool";
@@ -453,9 +432,6 @@ public:
 
     string checkType(MyDB_CatalogPtr c){
         string ltype = lhs->checkType(c), rtype = rhs->checkType(c);
-        cout<< "type is <" <<endl;
-        cout<< ltype <<endl;
-        cout<< rtype <<endl;
         if(ltype.compare("string") == 0 && rtype.compare("string") ==0 ) return "bool";
         if((ltype.compare("int")==0 || ltype.compare("double")== 0)&& (rtype.compare("double") == 0 || rtype.compare("int") ==0)){
             return "bool";
@@ -491,15 +467,11 @@ public:
 	~NeqOp () {}
 
     bool validateTree(MyDB_CatalogPtr c){
-        cout<< "NeqOp is validating..." <<endl;
         return (lhs->validateTree(c) && rhs->validateTree(c));
     }
 
     string checkType(MyDB_CatalogPtr c){
         string ltype = lhs->checkType(c), rtype = rhs->checkType(c);
-        cout<< "type is !=" <<endl;
-        cout<< ltype <<endl;
-        cout<< rtype <<endl;
         if(ltype.compare("string") == 0 && rtype.compare("string") ==0 ) return "bool";
         if((ltype.compare("int")==0 || ltype.compare("double")== 0)&& (rtype.compare("double") == 0 || rtype.compare("int") ==0)){
             return "bool";
@@ -535,15 +507,11 @@ public:
 	~OrOp () {}
 
     bool validateTree(MyDB_CatalogPtr c){
-        cout<< "OrOp is validating..." <<endl;
         return (lhs->validateTree(c) && rhs->validateTree(c));
     }
 
     string checkType(MyDB_CatalogPtr c){
         string ltype = lhs->checkType(c), rtype = rhs->checkType(c);
-        cout<< "type is ||" <<endl;
-        cout<< ltype <<endl;
-        cout<< rtype <<endl;
         if(ltype.compare("bool") == 0 && rtype.compare("bool") ==0 ) return "bool";
 
         cout<<"Type Error:"<<ltype << " || " << rtype << " type does not match."<<endl;
@@ -577,15 +545,11 @@ public:
 	~EqOp () {}
 
     bool validateTree(MyDB_CatalogPtr c){
-        cout<< "Eq is validating..." <<endl;
         return (lhs->validateTree(c) && rhs->validateTree(c));
     }
 
     string checkType(MyDB_CatalogPtr c){
         string ltype = lhs->checkType(c), rtype = rhs->checkType(c);
-        cout<< "type is ==" <<endl;
-        cout<< ltype <<endl;
-        cout<< rtype <<endl;
         if(ltype.compare("string") == 0 && rtype.compare("string") ==0 ) return "bool";
         if((ltype.compare("int")==0 || ltype.compare("double")== 0)&& (rtype.compare("double") == 0 || rtype.compare("int") ==0)){
             return "bool";
@@ -619,14 +583,11 @@ public:
 	~NotOp () {}
 
     bool validateTree(MyDB_CatalogPtr c){
-        cout<< "NotOp is validating..." <<endl;
         return child->validateTree(c);
     }
 
     string checkType(MyDB_CatalogPtr c){
         string ctype = child->checkType(c);
-        cout<< "type is !" <<endl;
-        cout<< ctype <<endl;
         if(ctype.compare("bool") == 0) return "bool";
         cout<<"Type Error:"<< " !(" << ctype << ") type does not match."<<endl;
         return "none";
@@ -662,9 +623,8 @@ public:
 
     string checkType(MyDB_CatalogPtr c){
         string ctype = child->checkType(c);
-        cout<< "child's type : "<< ctype <<endl;
         if(ctype.compare("int") == 0 || ctype.compare("double") == 0) return "int";
-        cout<<"Type Error:"<< " sum(" << ctype << ") type does not match."<<endl;
+        if(ctype.compare("none")!=0) cout<<"Type Error: Sum() cannot be applied to "<<  ctype << "." <<endl;
         return "none";
     }
 
@@ -693,7 +653,6 @@ public:
 	~AvgOp () {}
 
     bool validateTree(MyDB_CatalogPtr c){
-        cout<< "Avg is validating..." <<endl;
         return child->validateTree(c);
     }
 

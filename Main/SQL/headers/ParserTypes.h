@@ -262,8 +262,7 @@ public:
         bool res = true;
         //validate table
 
-		cout << "select clauses size : "<< valuesToSelect.size() << endl;
-
+		cout<<"validating tables...."<<tablesToProcess.size()<<" clauses"<<endl;
         for(auto table:tablesToProcess){
             if(!tableInCatalog(table.first, mycatalog)){
                 res = false;
@@ -273,6 +272,8 @@ public:
 				mycatalog->addToTableList(table.first, table.second);
 			}
         }
+
+		cout<<"validating disjunctions...."<<allDisjunctions.size()<<" clauses"<<endl;
         //validate disjunction
 		for(auto discon:allDisjunctions){
 			if(!discon->validateTree(mycatalog)){
@@ -288,6 +289,7 @@ public:
 		}
 
 		//validate selection
+		cout<<"validating select...."<<valuesToSelect.size()<<" clauses"<<endl;
 		for(auto sel:valuesToSelect){
 			if(!sel->validateTree(mycatalog)){
 				cout<< "Error: Select clause is not valid."<< endl;
@@ -302,6 +304,7 @@ public:
 		}
 
         //validate grouping
+		cout<<"validating group...."<<groupingClauses.size()<<" clauses"<<endl;
 		for(auto group:groupingClauses){
 			if(!group->validateTree(mycatalog)){
 				cout<<"Error: Group Clause is not valid"<<endl;
@@ -320,7 +323,7 @@ public:
 			{
 				if(!s->inGroupBy(mycatalog))
 				{
-					cout<<"Error: grouping in SELECT clause not valid"<<endl;
+					cout<<"Error: select clause is not in group by"<<endl;
 					res = false;
 					break;
 				}

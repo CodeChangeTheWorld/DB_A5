@@ -196,10 +196,6 @@ void MyDB_Catalog::clearTableList() {
 	table_list.clear();
 }
 
-vector<pair<string, string>> MyDB_Catalog::getGroupList(){
-	return group_list;
-};
-
 #endif
 
 

@@ -88,7 +88,6 @@ int main (int numArgs, char **args) {
 						// print it out
 						final->printSFWQuery ();
 
-                        cout<<"Size: "<<MyDB_Table::getAllTables(myCatalog).size()<<endl;
                         //semantic checks
                         cout<<"Semantic check begins..." <<endl;
                         if(final->semanticCheck(myCatalog)){
