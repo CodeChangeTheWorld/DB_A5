@@ -262,6 +262,8 @@ public:
         bool res = true;
         //validate table
 
+		cout << "select clauses size : "<< valuesToSelect.size() << endl;
+
 		//validate selection
 		for(auto sel:valuesToSelect){
 			cout<<"Validate Select Value!" << endl;
