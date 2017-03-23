@@ -296,13 +296,14 @@ public:
 		}
 
 		//check select clause
-		if(groupingClauses.size()>0){
-			cout<< mycatalog->getGroupList().size()<<endl;
-			for(auto group:mycatalog->getGroupList()){
-				cout<<"group : " << group.first<<"-"<<group.second<<endl;
+		for(auto select:valuesToSelect){
+			if(select->checkType(mycatalog).compare("none") == 0){
+				    cout<< "Error: Selected type is not valid." << endl;
+					res = false;
+					break;
 			}
 
-			for(auto select:valuesToSelect){
+			if(groupingClauses.size()>0){
 				if(!select->inGroupBy(mycatalog)){
 					cout<<"Select value " + select->toString() + " is not in GROUP BY clause."<<endl;
 					res = false;
