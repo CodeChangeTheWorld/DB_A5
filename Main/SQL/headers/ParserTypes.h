@@ -278,7 +278,7 @@ public:
 				break;
 			}
 			if(discon->checkType(mycatalog).compare("none") == 0) {
-				cout << "Error: Type is not valid." << endl;
+				cout << "Error: Disjunction type is not valid." << endl;
 				res = false;
 				break;
 			}
@@ -286,7 +286,7 @@ public:
 		//validate disjunction
 		for(auto sel:valuesToSelect){
 			if(!sel->validateTree(mycatalog)){
-				cout<< "Error: Disjunction is not valid."<<endl;
+				cout<< "Error: Select type is not valid."<< endl;
 				res = false;
 				break;
 			}
