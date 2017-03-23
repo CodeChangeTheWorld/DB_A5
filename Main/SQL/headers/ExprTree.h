@@ -657,14 +657,13 @@ public:
 	~SumOp () {}
 
     bool validateTree(MyDB_CatalogPtr c){
-        cout<< "Sum is validating..." <<endl;
         return child->validateTree(c);
     }
 
     string checkType(MyDB_CatalogPtr c){
         string ctype = child->checkType(c);
-        if(ctype.compare("int") == 0 || ctype.compare("double") == 0) return "int";
         cout<< "child's type : "<< ctype <<endl;
+        if(ctype.compare("int") == 0 || ctype.compare("double") == 0) return "int";
         cout<<"Type Error:"<< " sum(" << ctype << ") type does not match."<<endl;
         return "none";
     }
