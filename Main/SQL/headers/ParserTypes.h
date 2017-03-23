@@ -283,6 +283,19 @@ public:
 				break;
 			}
 		}
+		//validate disjunction
+		for(auto sel:valuesToSelect){
+			if(!sel->validateTree(mycatalog)){
+				cout<< "Error: Disjunction is not valid."<<endl;
+				res = false;
+				break;
+			}
+			if(sel->checkType(mycatalog).compare("none") == 0) {
+				cout << "Error: Type is not valid." << endl;
+				res = false;
+				break;
+			}
+		}
         //validate grouping
 		for(auto group:groupingClauses){
 			if(!group->validateTree(mycatalog)){
@@ -309,14 +322,6 @@ public:
 			}
 		}
 
-		for (auto s : valuesToSelect)
-		{
-			if(!s->checkType(mycatalog).compare("none")){
-				cout<<"Type Error: type in SELECT clause not valid"<<endl;
-				res = false;
-				break;
-			}
-		}
 
 		mycatalog->clearGroupList();
 		mycatalog->clearTableList();
