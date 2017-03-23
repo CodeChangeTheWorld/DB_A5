@@ -162,11 +162,6 @@ int MyDB_Catalog ::inGroupBy(string tableName,string attName){
 	string fullname = getFullTableName(tableName);
 	int i=0;
 	for(pair<string,string> p:group_list){
-		cout<<"p's first : " + p.first << " p'second "<< p.second << endl;
-		cout<< p.first << " "<< tableName <<" " <<(p.first.compare(tableName)==0) <<endl;
-		cout<< p.first << " "<< fullname << " "<< (p.first.compare(fullname)==0) <<endl;
-		cout<< p.second << " "<< attName << " "<< (p.second.compare(attName)==0) <<endl;
-
 		if((p.first.compare(tableName)==0 || p.first.compare(fullname)==0) && p.second.compare(attName) == 0){
 			return i;
 		}
