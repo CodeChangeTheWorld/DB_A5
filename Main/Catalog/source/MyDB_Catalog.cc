@@ -179,7 +179,7 @@ void MyDB_Catalog::addToGroupList(string tableName, string attName){
 }
 
 string MyDB_Catalog::getTableName(string identifier){
-	string abbv;
+	string abbv="a";
 	abbv[0]=identifier[1];
 	return getFullTableName(abbv);
 }
