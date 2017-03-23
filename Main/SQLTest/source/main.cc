@@ -87,6 +87,11 @@ int main (int numArgs, char **args) {
 
 						// print it out
 						final->printSFWQuery ();
+                        //print all tables
+                        for(auto table:MyDB_Table::getAllTables(mycatalog)){
+                            cout<< "Table : " << table.first << endl;
+                        }
+
                         //semantic checks
                         cout<<"Semantic check begins..." <<endl;
                         if(final->semanticCheck(myCatalog)){

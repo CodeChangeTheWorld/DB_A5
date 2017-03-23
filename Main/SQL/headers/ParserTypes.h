@@ -264,7 +264,7 @@ public:
         for(auto table:tablesToProcess){
             if(!tableInCatalog(table.first, mycatalog)){
                 res = false;
-                cout << "Error: table '" + table.first + "' does not exist";
+                cout << "Error: table '" + table.first + "' does not exist" << endl;
 				break;
             }else {
 				mycatalog->addToTableList(table.first, table.second);
