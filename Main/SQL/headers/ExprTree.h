@@ -46,6 +46,7 @@ public:
 	}
 
 	bool validateTree(MyDB_CatalogPtr c){
+        cout<< "BoolLiteral is validating..." <<end;
 		return true;
 	}
     bool inGroupBy(MyDB_CatalogPtr c){
@@ -73,6 +74,7 @@ public:
 	}
 
     bool validateTree(MyDB_CatalogPtr c){
+        cout<< "DoubleLiteral is validating..." <<end;
         return true;
     }
     bool inGroupBy(MyDB_CatalogPtr c){
@@ -105,6 +107,7 @@ public:
 	}
 
     bool validateTree(MyDB_CatalogPtr c){
+        cout<< "IntLiteral is validating..." <<end;
         return true;
     }
     bool inGroupBy(MyDB_CatalogPtr c){
@@ -136,6 +139,7 @@ public:
 	}
 
     bool validateTree(MyDB_CatalogPtr c){
+        cout<< "String is validating..." <<end;
         return true;
     }
     bool inGroupBy(MyDB_CatalogPtr c){
@@ -168,6 +172,7 @@ public:
 	}
 
 	bool validateTree(MyDB_CatalogPtr c){
+        cout<< "Identifier is validating..." <<end;
 		//check if table exist
 		if(c->tableIndex(tableName) == -1){
             cout<<"No table '" + tableName + "' exist";
@@ -217,6 +222,7 @@ public:
 	}
 
 	string toString () {
+        cout<< "MinusOp is validating..." <<end;
 		return "- (" + lhs->toString () + ", " + rhs->toString () + ")";
 	}	
 
@@ -265,6 +271,7 @@ public:
 	~PlusOp () {}
 
     bool validateTree(MyDB_CatalogPtr c){
+        cout<< "PlusOp is validating..." <<end;
         return (lhs->validateTree(c) && rhs->validateTree(c));
     }
 
@@ -308,6 +315,7 @@ public:
 	~TimesOp () {}
 
     bool validateTree(MyDB_CatalogPtr c){
+        cout<< "TimesOp is validating..." <<end;
         return (lhs->validateTree(c) && rhs->validateTree(c));
     }
 
@@ -349,6 +357,7 @@ public:
 	~DivideOp () {}
 
     bool validateTree(MyDB_CatalogPtr c){
+        cout<< "DivideOp is validating..." <<end;
         return (lhs->validateTree(c) && rhs->validateTree(c));
     }
 
@@ -392,6 +401,7 @@ public:
 	~GtOp () {}
 
     bool validateTree(MyDB_CatalogPtr c){
+        cout<< "GtOp is validating..." <<end;
         return (lhs->validateTree(c) && rhs->validateTree(c));
     }
 
@@ -437,6 +447,7 @@ public:
 	~LtOp () {}
 
     bool validateTree(MyDB_CatalogPtr c){
+        cout<< "LtOp is validating..." <<end;
         return (lhs->validateTree(c) && rhs->validateTree(c));
     }
 
@@ -480,6 +491,7 @@ public:
 	~NeqOp () {}
 
     bool validateTree(MyDB_CatalogPtr c){
+        cout<< "NeqOp is validating..." <<end;
         return (lhs->validateTree(c) && rhs->validateTree(c));
     }
 
@@ -523,6 +535,7 @@ public:
 	~OrOp () {}
 
     bool validateTree(MyDB_CatalogPtr c){
+        cout<< "OrOp is validating..." <<end;
         return (lhs->validateTree(c) && rhs->validateTree(c));
     }
 
@@ -564,6 +577,7 @@ public:
 	~EqOp () {}
 
     bool validateTree(MyDB_CatalogPtr c){
+        cout<< "Eq is validating..." <<end;
         return (lhs->validateTree(c) && rhs->validateTree(c));
     }
 
@@ -605,6 +619,7 @@ public:
 	~NotOp () {}
 
     bool validateTree(MyDB_CatalogPtr c){
+        cout<< "NotOp is validating..." <<end;
         return child->validateTree(c);
     }
 
@@ -642,6 +657,7 @@ public:
 	~SumOp () {}
 
     bool validateTree(MyDB_CatalogPtr c){
+        cout<< "Sum is validating..." <<end;
         return child->validateTree(c);
     }
 
@@ -678,6 +694,7 @@ public:
 	~AvgOp () {}
 
     bool validateTree(MyDB_CatalogPtr c){
+        cout<< "Avg is validating..." <<end;
         return child->validateTree(c);
     }
 
