@@ -161,6 +161,7 @@ string MyDB_Catalog ::getAbbreviation(string fullname) {
 int MyDB_Catalog ::inGroupBy(string tableName,string attName){
 	string fullname = getFullTableName(tableName);
 	int i=0;
+	cout<<"fullname of n :" << getFullTableName("n");
 	for(pair<string,string> p:table_list){
 		if((p.first.compare(tableName)==0 || p.first.compare(fullname)==0) && p.second.compare(attName) == 0){
 			return i;
