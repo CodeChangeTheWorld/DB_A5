@@ -286,7 +286,7 @@ public:
 				break;
 			}
 		}
-		
+
 		//validate selection
 		for(auto sel:valuesToSelect){
 			if(!sel->validateTree(mycatalog)){
