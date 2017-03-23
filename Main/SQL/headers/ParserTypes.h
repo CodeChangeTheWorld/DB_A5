@@ -261,6 +261,21 @@ public:
     bool validate(MyDB_CatalogPtr mycatalog){
         bool res = true;
         //validate table
+
+		//validate selection
+		for(auto sel:valuesToSelect){
+			cout<<"Validate Select Value!" << endl;
+			if(!sel->validateTree(mycatalog)){
+				cout<< "Error: Select type is not valid."<< endl;
+				res = false;
+				break;
+			}
+			if(sel->checkType(mycatalog).compare("none") == 0) {
+				cout << "Type Error: Select Type "<< sel->checkType(mycatalog) <<" is not valid." << endl;
+				res = false;
+				break;
+			}
+		}
         for(auto table:tablesToProcess){
             if(!tableInCatalog(table.first, mycatalog)){
                 res = false;
@@ -284,19 +299,7 @@ public:
 			}
 		}
 
-		//validate selection
-		for(auto sel:valuesToSelect){
-			if(!sel->validateTree(mycatalog)){
-				cout<< "Error: Select type is not valid."<< endl;
-				res = false;
-				break;
-			}
-			if(sel->checkType(mycatalog).compare("none") == 0) {
-				cout << "Type Error: Select Type "<< sel->checkType(mycatalog) <<" is not valid." << endl;
-				res = false;
-				break;
-			}
-		}
+
         //validate grouping
 		for(auto group:groupingClauses){
 			if(!group->validateTree(mycatalog)){
