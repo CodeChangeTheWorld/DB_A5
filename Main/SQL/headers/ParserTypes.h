@@ -266,8 +266,9 @@ public:
                 res = false;
                 cout << "Error: table '" + table.first + "' does not exist";
 				break;
-            }
-			mycatalog->addToTableList(table.first,table.second);
+            }else {
+				mycatalog->addToTableList(table.first, table.second);
+			}
         }
         //validate disjunction
 		for(auto discon:allDisjunctions){
@@ -288,15 +289,14 @@ public:
 				cout<<"Error: Group Clause is not valid"<<endl;
 				res = false;
 				break;
+			}else{
+				mycatalog->addToGroupList(mycatalog->getTableName(group->toString()),mycatalog->getAttributeName(group->toString()));
 			}
-			mycatalog->addToGroupList(mycatalog->getTableName(group->toString()),mycatalog->getAttributeName(group->toString()));
+
 		}
 
 		//check select clause
 		if(groupingClauses.size()>0){
-			for(auto group:mycatalog->group_list){
-				cout<< group.first << " and "<<group.second<<endl;
-			}
 			for(auto select:valuesToSelect){
 				if(!select->inGroupBy(mycatalog)){
 					cout<<"Select value " + select->toString() + " is not in GROUP BY clause."<<endl;

@@ -64,7 +64,7 @@ public:
     string getAttributeName(string);
     void clearGroupList();
     void clearTableList();
-	vector<pair<string, string>> group_list ;
+
 
 private:
 
@@ -74,7 +74,7 @@ private:
 	// the map that stores the catalog's contents
 	map <string, string> myData;
     vector<pair<string, string>> table_list ;
-
+	vector<pair<string, string>> group_list ;
 };
 
 #endif
