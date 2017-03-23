@@ -296,19 +296,25 @@ public:
 		}
 
 		//check select clause
-		for(auto select:valuesToSelect){
-			if(select->checkType(mycatalog).compare("none") == 0){
-				    cout<< "Error: Selected type is not valid." << endl;
-					res = false;
-					break;
-			}
-
-			if(groupingClauses.size()>0){
-				if(!select->inGroupBy(mycatalog)){
-					cout<<"Select value " + select->toString() + " is not in GROUP BY clause."<<endl;
+		if(groupingClauses.size()!=0)
+		{
+			for (auto s : valuesToSelect)
+			{
+				if(!s->inGroupBy(mycatalog))
+				{
+					cout<<"Error: grouping in SELECT clause not valid"<<endl;
 					res = false;
 					break;
 				}
+			}
+		}
+
+		for (auto s : valuesToSelect)
+		{
+			if(!s->checkType(mycatalog).compare("none")){
+				cout<<"Type Error: type in SELECT clause not valid"<<endl;
+				res = false;
+				break;
 			}
 		}
 
